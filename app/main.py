@@ -39,4 +39,10 @@ app = FastAPI(
     dependencies=[Depends(validate_inverso_api_key)],
 )
 
+
+@app.post("/health")
+async def health():
+    return {"status": "ok"}
+
+
 app.include_router(prefix="/api/v1", router=onboarding_router)
