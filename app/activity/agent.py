@@ -14,13 +14,13 @@ from langgraph.types import Command
 from pydantic import BaseModel, Field
 from pydantic_ai import format_as_xml
 
-from app.agents.activity.create import (
+from app.activity.create import (
     Activity,
     ActivityBackground,
     ActivityStep,
     OnboadingDataComplete,
 )
-from app.agents.onboarding import PersonalContext
+from app.onboarding.agent import PersonalContext
 
 Messages = Annotated[list[BaseMessage], add_messages]
 

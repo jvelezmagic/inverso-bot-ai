@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 from pydantic_ai import format_as_xml
 
-from app.agents.onboarding import PersonalContext
+from app.onboarding.agent import PersonalContext
 
 
 class ActivityBackground(BaseModel):
