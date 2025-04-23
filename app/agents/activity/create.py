@@ -2,6 +2,7 @@ from typing import Literal
 
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
+from pydantic_ai import format_as_xml
 
 from app.agents.onboarding import PersonalContext
 
@@ -99,6 +100,9 @@ class Activity(BaseModel):
             "if the user is not comfortable with the primary method (e.g., using pen and paper instead of a spreadsheet)."
         ),
     )
+
+    def as_xml(self) -> str:
+        return format_as_xml(self)
 
 
 class Activities(BaseModel):
@@ -202,6 +206,9 @@ class OnboadingDataComplete(BaseModel):
             "Should be filled as the user shares their background. "
         ),
     )
+
+    def as_xml(self) -> str:
+        return format_as_xml(self)
 
 
 async def create_activities(onboarding_data: OnboadingDataComplete):

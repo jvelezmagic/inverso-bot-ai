@@ -3,7 +3,8 @@
         "."
     ],
     "graphs": {
-        "onboarding_agent": "./app/agents/onboarding.py:onboarding_agent"
+        "onboarding_agent": "./app/agents/onboarding.py:onboarding_agent",
+        "activity_agent": "./app/agents/activity/agent.py:agent"
     },
     "python_version": "3.13"
 }
