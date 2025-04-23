@@ -5,7 +5,7 @@ from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
 from langchain_core.messages import AIMessageChunk, HumanMessage
 from langchain_core.runnables.schema import EventData
-from pydantic import BaseModel, Discriminator, Field
+from pydantic import BaseModel, Field
 
 from app.onboarding.agent import OnboardingData
 from app.onboarding.dependencies import OnboaringAgentDep
