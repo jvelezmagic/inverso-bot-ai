@@ -114,7 +114,7 @@ class Activities(BaseModel):
     )
 
 
-class OnboadingDataComplete(BaseModel):
+class OnboardingDataComplete(BaseModel):
     """All relevant information collected during the onboarding process."""
 
     # 1. Life Stage
@@ -211,7 +211,7 @@ class OnboadingDataComplete(BaseModel):
         return format_as_xml(self)
 
 
-async def create_activities(onboarding_data: OnboadingDataComplete):
+async def create_activities(onboarding_data: OnboardingDataComplete):
     llm = ChatOpenAI(model="o3-2025-04-16")
 
     system_prompt = """\
@@ -263,7 +263,7 @@ if __name__ == "__main__":
     import asyncio
 
     async def main():
-        onboarding_data = onboarding_data = OnboadingDataComplete(
+        onboarding_data = onboarding_data = OnboardingDataComplete(
             life_stage="Professional",
             profession="Software Engineer",
             age_range="30-39",

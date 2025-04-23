@@ -1,5 +1,8 @@
 from typing import Annotated, Literal
 
+from langchain_core.callbacks.manager import (
+    adispatch_custom_event,
+)
 from langchain_core.messages import BaseMessage, ToolMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableConfig
@@ -18,7 +21,7 @@ from app.activity.create import (
     Activity,
     ActivityBackground,
     ActivityStep,
-    OnboadingDataComplete,
+    OnboardingDataComplete,
 )
 from app.onboarding.agent import PersonalContext
 
@@ -86,8 +89,8 @@ def get_activity_progress(
 
 class ChatActivityState(BaseModel):
     messages: Messages
-    onboading_data: OnboadingDataComplete = Field(
-        default=OnboadingDataComplete(
+    onboarding_data: OnboardingDataComplete = Field(
+        default=OnboardingDataComplete(
             life_stage="Professional",
             profession="Software Engineer",
             age_range="30-39",
@@ -233,6 +236,10 @@ async def update_activity_progress(  # type: ignore
     progress: ActivityProgress,
 ):
     """Update the progress of the activity. Full progress is required to be provided even if there are not started steps."""
+    await adispatch_custom_event(
+        "progress_updated",
+        progress.model_dump(),
+    )
     return Command(  # type: ignore
         update={
             "progress": progress.model_dump(),
@@ -256,7 +263,7 @@ async def chat_activity(
     configuration = Configuration.from_runnable_config(config)
 
     messages = state.messages
-    onboarding_data = state.onboading_data
+    onboarding_data = state.onboarding_data
     activity = state.activity
     progress = state.progress
 

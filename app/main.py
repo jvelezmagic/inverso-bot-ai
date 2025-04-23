@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, Header, HTTPException, status
 
+from app.activity.router import router as activity_router
 from app.config import settings
 from app.onboarding.router import router as onboarding_router
 
@@ -47,3 +48,4 @@ async def health():
 
 
 app.include_router(prefix="/api/v1", router=onboarding_router)
+app.include_router(prefix="/api/v1", router=activity_router)
