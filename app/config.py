@@ -43,6 +43,8 @@ class Settings(BaseSettings):
         )
         return PostgresDsn(url.unicode_string())
 
+    INVERSO_API_KEY: str | None = None
+
     model_config = {
         "env_file": ".env",
         "env_file_encoding": "utf-8",

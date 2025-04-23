@@ -426,7 +426,6 @@ async def collect_onboarding_data(state: State, config: RunnableConfig):
 
     onboarding_completed = getattr(final_onboarding_data, "onboarding_completed", False)
     if onboarding_completed:
-        print("Onboarding completed", final_onboarding_data)
         await adispatch_custom_event(
             "onboarding_completed",
             final_onboarding_data.model_dump(),
