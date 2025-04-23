@@ -1,5 +1,5 @@
 import datetime
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Literal
 
 import trustcall
 from langchain_core.messages import BaseMessage
@@ -230,58 +230,12 @@ def latest_onboarding_data(
             return new_onboarding_data
 
 
-class ActivityStep(BaseModel):
-    """A single step or section in the activity."""
-
-    index: int = Field(..., description="Index or position of the step")
-    title: str = Field(..., description="Title or headline of the step")
-    content: str = Field(..., description="Educational content or explanation")
-    example: str | None = Field(None, description="Personalized example or analogy")
-    question: str | None = Field(
-        None,
-        description="Open-ended question to check understanding or prompt reflection",
-    )
-
-
-class Activity(BaseModel):
-    """A structured activity with steps or sections."""
-
-    title: str = Field(..., description="Title or headline of the activity")
-    steps: list[ActivityStep] = Field(
-        description="List of steps or sections in the activity",
-    )
-    steps_progress: list[Literal["Not started", "In progress", "Completed"]] = Field(
-        description="List of booleans indicating if each step is completed",
-    )
-    feedback: str | None = Field(
-        None,
-        description="User's feedback or reflection after completing the activity",
-    )
-
-
-class Activities(BaseModel):
-    """A collection of activities with their steps and progress."""
-
-    activities: list[Activity] = Field(
-        description="List of activities with their steps and progress",
-    )
-
-
 class State(BaseModel):
     messages: Messages
     onboarding_data: Annotated[OnboardingData | None, latest_onboarding_data] = Field(
         default=None,
         description="Datos del onboarding",
     )
-
-
-async def choose_chat(
-    state: State, config: RunnableConfig
-) -> Literal["chat_onboarding", "chat_activity"]:
-    if state.onboarding_data is None or not state.onboarding_data.onboarding_completed:
-        return "chat_onboarding"
-
-    return "chat_activity"
 
 
 async def chat_onboarding(state: State, config: RunnableConfig) -> BotResponse:
