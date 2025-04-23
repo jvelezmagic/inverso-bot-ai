@@ -1,0 +1,9 @@
+{
+    "dependencies": [
+        "."
+    ],
+    "graphs": {
+        "onboarding_agent": "./app/agents/onboarding.py:onboarding_agent"
+    },
+    "python_version": "3.13"
+}

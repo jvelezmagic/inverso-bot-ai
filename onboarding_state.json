@@ -1,0 +1,16 @@
+{
+  "profession": "Estudiante de biología",
+  "age_range": null,
+  "life_stage": "Estudiante",
+  "financial_goals": [],
+  "financial_interests": [],
+  "financial_concerns": [],
+  "financial_knowledge_level": null,
+  "previous_experience": [],
+  "personal_context": {
+    "hobbies": [],
+    "family_status": null
+  },
+  "onboarding_completed": false,
+  "onboarding_date": null
+}
