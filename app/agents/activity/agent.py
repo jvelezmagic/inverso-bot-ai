@@ -266,8 +266,8 @@ async def chat_activity(
             ]
         )
 
-    onboarding_data_str = format_as_xml(state.onboading_data)
-    activity_str = format_as_xml(state.activity)
+    onboarding_data_str = format_as_xml(onboarding_data)
+    activity_str = format_as_xml(activity)
     progress_str = format_as_xml(progress)
 
     system_prompt = """\
@@ -305,10 +305,24 @@ La mayor parte de la información estática (título de la actividad, descripci�
 - You have access to the user's onboarding data, the full activity structure, and their current progress.
 - Use this information to personalize every response and make the learning journey feel unique and supportive.
 
+**Rules for Updating Progress:**
+- You must call the `update_activity_progress` tool **immediately** after the user completes a step, marks a step as done, or explicitly indicates they have finished a task for a step.
+- If the user goes back, repeats, or changes the status of a step (for example, marks a previous step as incomplete or wants to redo it), you must also call the tool to reflect the new status.
+- If the user skips a step, update the progress to reflect this and call the tool.
+- Any time the status of any step changes (for example, from "Not started" to "In progress", or from "In progress" to "Completed"), you must update the progress using the tool.
+- Do **not** call the tool if there has been no change in the status of any steps.
+- When you call the tool, always send the full, updated status of all steps, not just the one that changed.
+
+    **Examples:**
+    - If the user says they have finished Step 1, mark that step as "Completed" and call the tool.
+    - If the user wants to go back to Step 2 and redo it, mark that step as "In progress" and call the tool.
+    - If the user decides to skip Step 3, update the progress to reflect this and call the tool.
+
 **Output Format:**
 - Respond conversationally, as if you are speaking directly to the user.
 - When referencing steps, use their titles and numbers for clarity.
 - If you need to update progress or use a tool, do so as instructed by the system.
+
 
 Begin by welcoming the user and introducing the activity. Then, guide them through the first step, making sure they understand what to do and why it matters.
 
