@@ -85,6 +85,20 @@ class Activity(BaseModel):
             "be clear, actionable, and build towards the overall objective."
         ),
     )
+    glossary: dict[str, str] | None = Field(
+        default=None,
+        description=(
+            "A dictionary of key terms and their definitions used in this activity. "
+            "Helps users understand jargon and technical language."
+        ),
+    )
+    alternative_methods: list[str] | None = Field(
+        default=None,
+        description=(
+            "Suggestions for non-technical or alternative ways to complete the activity "
+            "if the user is not comfortable with the primary method (e.g., using pen and paper instead of a spreadsheet)."
+        ),
+    )
 
 
 class Activities(BaseModel):
@@ -205,10 +219,13 @@ Guidelines:
     - A descriptive title
     - A short, actionable instruction or explanation
     - A specific step objective
-5. **Contextualization**: Use examples, analogies, and scenarios that are familiar to the user, based on their profession, hobbies, and life situation.
+5. **Contextualization**: Use examples, analogies, and scenarios that are familiar to the user, based on their profession, hobbies, and life situation. Reference family status where relevant.
 6. **Progression**: Start with foundational concepts if the user's knowledge is basic, or introduce more advanced topics if they are experienced. Always connect new concepts to what the user already knows or has experienced.
-7. **Engagement**: Make the activities interactive and thought-provoking, encouraging the user to reflect, apply, or discuss what they learn.
-8. **Output Format**: Return the activities as a structured JSON object matching the provided schema (Activities), with all required fields filled.
+7. **Engagement and Reflection**: Make the activities interactive and thought-provoking, encouraging the user to reflect, apply, or discuss what they learn. Include at least one step in each activity that prompts the user to reflect on their feelings, motivations, or challenges related to the topic.
+8. **Accessibility**: Avoid overwhelming the user with too much information at once. If technical tools (like spreadsheets or scripts) are suggested, also offer a non-technical alternative.
+9. **Jargon and Definitions**: Clearly define any financial or technical jargon used, either in the background or as a glossary step.
+10. **Adaptation**: If the user already has experience with a topic, suggest ways to deepen or adapt the activity for their level.
+11. **Output Format**: Return the activities as a structured JSON object matching the provided schema (Activities), with all required fields filled.
 
 Your output will be used as the basis for an interactive learning experience, where an AI will guide the user through each activity and step in conversation.
 
@@ -217,7 +234,7 @@ Example activity titles:
 - "Understanding Emergency Funds: Why and How"
 - "Investing Basics: Getting Started with What You Know"
 
-Be creative, empathetic, and practical. Focus on helping the user achieve their financial goals in a way that feels relevant and achievable in their real life.
+Be creative, empathetic, and practical. Focus on helping the user achieve their financial goals in a way that feels relevant and achievable in their real life, and that increases their financial literacy and confidence.
 """
 
     activities = await llm.with_structured_output(
