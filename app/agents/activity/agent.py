@@ -6,7 +6,9 @@ from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langchain_core.tools.base import InjectedToolCallId
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import END, StateGraph, add_messages
+from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.types import Command
 from pydantic import BaseModel, Field
@@ -381,4 +383,5 @@ chat_activity_agent_builder.add_edge("tools", "chat_activity")
 chat_activity_agent_builder.add_edge("chat_activity", END)
 
 
-agent = chat_activity_agent_builder.compile()
+def get_graph(checkpointer: AsyncPostgresSaver | None = None) -> CompiledStateGraph:
+    return chat_activity_agent_builder.compile(checkpointer=checkpointer)

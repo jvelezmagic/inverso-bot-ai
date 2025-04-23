@@ -5,7 +5,9 @@ import trustcall
 from langchain_core.messages import BaseMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import END, StateGraph, add_messages
+from langgraph.graph.state import CompiledStateGraph
 from pydantic import BaseModel, Field
 
 Messages = Annotated[list[BaseMessage], add_messages]
@@ -422,4 +424,6 @@ onboarding_agent_builder.set_entry_point("collect_onboarding_data")
 onboarding_agent_builder.add_edge("collect_onboarding_data", "chat_onboarding")
 onboarding_agent_builder.add_edge("chat_onboarding", END)
 
-onboarding_agent = onboarding_agent_builder.compile()
+
+def get_graph(checkpointer: AsyncPostgresSaver | None = None) -> CompiledStateGraph:
+    return onboarding_agent_builder.compile(checkpointer=checkpointer)
