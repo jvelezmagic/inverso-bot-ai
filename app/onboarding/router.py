@@ -1,12 +1,13 @@
-from typing import Any
+from typing import Annotated, Any, Literal
 
 import orjson
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
 from langchain_core.messages import AIMessageChunk, HumanMessage
 from langchain_core.runnables.schema import EventData
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Discriminator, Field
 
+from app.onboarding.agent import OnboardingData
 from app.onboarding.dependencies import OnboaringAgentDep
 
 
@@ -18,6 +19,14 @@ class ChatOnboardingRequest(BaseModel):
     )
     message: str = Field(
         description="Message to chat onboarding.",
+    )
+
+
+class ChatOnboardingStateRequest(BaseModel):
+    """Request to chat onboarding state."""
+
+    thread_id: str = Field(
+        description="ID of the thread to chat onboarding state.",
     )
 
 
@@ -83,6 +92,9 @@ async def chat_onboarding(
 
                 message_chunk, metadata = message_chunk
 
+                if not isinstance(message_chunk, AIMessageChunk):
+                    continue
+
                 langgraph_node = metadata.get("langgraph_node", None)
 
                 if langgraph_node == "chat_onboarding":
@@ -98,3 +110,46 @@ async def chat_onboarding(
                     )
 
     return StreamingResponse(stream_response(), media_type="text/event-stream")
+
+
+class HumanMessageData(BaseModel):
+    type: Literal["human"] = "human"
+    id: str
+    content: str
+
+
+class AIMessageData(BaseModel):
+    type: Literal["ai"] = "ai"
+    id: str
+    content: str
+
+
+Message = Annotated[HumanMessageData | AIMessageData, Field(discriminator="type")]
+
+
+class GetStateResponse(BaseModel):
+    messages: list[Message]
+    onboarding_data: OnboardingData
+
+
+@router.get("/", response_model=GetStateResponse)
+async def get_state(
+    agent: OnboaringAgentDep,
+    request: ChatOnboardingStateRequest = Query(),
+):
+    config = {"configurable": {"thread_id": request.thread_id}}
+    state = await agent.aget_state(config=config)
+    messages = state.values["messages"]
+    onboarding_data = state.values["onboarding_data"]
+    return {
+        "messages": [
+            {
+                "id": message.id,
+                "type": message.type,
+                "content": message.content,
+            }
+            for message in messages
+            if message.type in ["human", "ai"]
+        ],
+        "onboarding_data": onboarding_data.model_dump(),
+    }

@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):  # noqa: ARG001
     ) as checkpointer:
         await checkpointer.setup()
         yield {
+            "checkpointer": checkpointer,
             "onboarding_agent": get_onboarding_graph(checkpointer=checkpointer),
             "activity_agent": get_activity_graph(checkpointer=checkpointer),
         }
