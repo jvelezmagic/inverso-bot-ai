@@ -2,6 +2,9 @@ import datetime
 from typing import Annotated, Literal
 
 import trustcall
+from langchain_core.callbacks.manager import (
+    adispatch_custom_event,
+)
 from langchain_core.messages import BaseMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
@@ -417,11 +420,19 @@ async def collect_onboarding_data(state: State, config: RunnableConfig):
         }
     )
     extracted_data = response["responses"]
-    if extracted_data:
-        onboarding_data = extracted_data[0]
-        return {"onboarding_data": onboarding_data}
+    final_onboarding_data = (
+        extracted_data[0] if extracted_data else state.onboarding_data
+    )
 
-    return {"onboarding_data": state.onboarding_data}
+    onboarding_completed = getattr(final_onboarding_data, "onboarding_completed", False)
+    if onboarding_completed:
+        print("Onboarding completed", final_onboarding_data)
+        await adispatch_custom_event(
+            "onboarding_completed",
+            final_onboarding_data.model_dump(),
+        )
+
+    return {"onboarding_data": final_onboarding_data}
 
 
 onboarding_agent_builder = StateGraph(
