@@ -9,12 +9,16 @@ from app.config import settings
 async def lifespan(app: FastAPI):  # noqa: ARG001
     from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 
+    from app.activity.agent import get_graph as get_activity_graph
+    from app.onboarding.agent import get_graph as get_onboarding_graph
+
     async with AsyncPostgresSaver.from_conn_string(
         settings.DATABASE_URI_PSYCOPG.encoded_string()
     ) as checkpointer:
         await checkpointer.setup()
         yield {
-            "checkpointer": checkpointer,
+            "onboarding_agent": get_onboarding_graph(checkpointer=checkpointer),
+            "activity_agent": get_activity_graph(checkpointer=checkpointer),
         }
 
 
