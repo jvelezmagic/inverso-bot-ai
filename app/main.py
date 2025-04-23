@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.config import settings
+from app.onboarding.router import router as onboarding_router
 
 
 @asynccontextmanager
@@ -25,3 +26,5 @@ async def lifespan(app: FastAPI):  # noqa: ARG001
 app = FastAPI(
     lifespan=lifespan,
 )
+
+app.include_router(prefix="/api/v1", router=onboarding_router)

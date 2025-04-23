@@ -85,6 +85,16 @@ def get_missing_fields(model: BaseModel, prefix: str = "") -> list[str]:
     return missing
 
 
+def get_nested_attr(obj: object, attr_path: str):
+    """Get nested attribute from an object using dot notation."""
+    attrs = attr_path.split(".")
+    for attr in attrs:
+        if obj is None:
+            return None
+        obj = getattr(obj, attr, None)
+    return obj
+
+
 class OnboardingData(BaseModel):
     """All relevant information collected during the onboarding process."""
 
@@ -269,7 +279,8 @@ async def chat_onboarding(state: State, config: RunnableConfig) -> BotResponse:
     )
 
     missing_information = "\n".join(
-        f"{field}: {getattr(state.onboarding_data, field)}\nDescripción: {OnboardingData.__fields__[field].description}"
+        # f"{field}: {getattr(state.onboarding_data, field)}\nDescripción: {OnboardingData.__fields__[field].description}"
+        f"{field}: {get_nested_attr(state.onboarding_data, field)}\nDescripción: {OnboardingData.model_fields[field.split('.')[0]].description}"
         for field in get_missing_fields(state.onboarding_data)
     )
 
