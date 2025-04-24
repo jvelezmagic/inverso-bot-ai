@@ -340,6 +340,7 @@ async def chat_onboarding(state: State, config: RunnableConfig) -> BotResponse:
     - Personalized to the user's context
     - Motivating and supportive
     - Focused on education, not direct advice
+    - Short and concise
 
     Do not mark onboarding as completed if there is still missing information.
 
