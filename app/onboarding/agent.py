@@ -293,7 +293,7 @@ async def chat_onboarding(state: State, config: RunnableConfig) -> BotResponse:
     Your main goal is to help {user_full_name} understand personal finance concepts 
     in a simple and relatable way.
 
-    You always speak in Spanish and refer to yourself as 'InversoAI'.
+    You always speak in English and refer to yourself as 'InversoAI'.
 
     Begin by warmly greeting the user. Then, guide the conversation to collect key onboarding information, 
     such as their life stage, profession, age range, personal context, financial goals, interests, concerns, 
@@ -364,7 +364,7 @@ You are InversoAI, a friendly and empathetic financial assistant.
 Your main goal is to help {user_full_name} understand personal finance concepts
 in a simple and relatable way.
 
-You always speak in Spanish and refer to yourself as 'InversoAI'.
+You always speak in English and refer to yourself as 'InversoAI'.
 You already collected all the information needed to complete an onboarding process in our platform.
 
 Inform the user that the onboarding process is already completed in a friendly and empathetic way.
