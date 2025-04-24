@@ -536,6 +536,11 @@ async def get_public_activities(
     """Get all public activities."""
 
     activities = await activity_repository.get_public_activities()
+    
+    # Sort activities by level: beginner, intermediate, advanced
+    level_order = {"beginner": 1, "intermediate": 2, "advanced": 3}
+    sorted_activities = sorted(activities, key=lambda a: level_order.get(a.level.lower(), 99))
+    
     return ActivityListResponse(
         data=[
             ActivityResponse(
@@ -550,7 +555,7 @@ async def get_public_activities(
                 alternative_methods=activity.alternative_methods,
                 level=activity.level,
             )
-            for activity in activities
+            for activity in sorted_activities
         ]
     )
 
@@ -563,6 +568,11 @@ async def get_user_activities(
     """Get all activities for a specific user."""
 
     activities = await activity_repository.get_user_activities(user_id)
+    
+    # Sort activities by level: beginner, intermediate, advanced
+    level_order = {"beginner": 1, "intermediate": 2, "advanced": 3}
+    sorted_activities = sorted(activities, key=lambda a: level_order.get(a.level.lower(), 99))
+    
     return ActivityListResponse(
         data=[
             ActivityResponse(
@@ -577,7 +587,7 @@ async def get_user_activities(
                 alternative_methods=activity.alternative_methods,
                 level=activity.level,
             )
-            for activity in activities
+            for activity in sorted_activities
         ]
     )
 
