@@ -88,14 +88,12 @@ class Activity(BaseModel):
         ),
     )
     glossary: dict[str, str] | None = Field(
-        default=None,
         description=(
             "A dictionary of key terms and their definitions used in this activity. "
             "Helps users understand jargon and technical language."
         ),
     )
     alternative_methods: list[str] | None = Field(
-        default=None,
         description=(
             "Suggestions for non-technical or alternative ways to complete the activity "
             "if the user is not comfortable with the primary method (e.g., using pen and paper instead of a spreadsheet)."
@@ -103,7 +101,6 @@ class Activity(BaseModel):
     )
 
     level: ActivityLevel = Field(
-        default=ActivityLevel.Beginner,
         description=(
             "The level of the activity. This helps categorize the activity and provide "
             "appropriate guidance for the user."
@@ -256,7 +253,8 @@ Be creative, empathetic, and practical. Focus on helping the user achieve their 
 """
 
     activities = await llm.with_structured_output(
-        schema=Activities, strict=True
+        schema=Activities,
+        strict=True,
     ).ainvoke(
         [
             ("system", system_prompt),
@@ -293,6 +291,5 @@ if __name__ == "__main__":
         )
 
         activities = await create_activities_from_onboarding_data(onboarding_data)
-        print(activities.model_dump_json(indent=2))
 
     asyncio.run(main())

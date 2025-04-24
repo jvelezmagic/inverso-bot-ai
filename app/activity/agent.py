@@ -23,6 +23,7 @@ from app.activity.create_from_onboarding import (
     ActivityStep,
     OnboardingDataComplete,
 )
+from app.activity.models import ActivityLevel
 from app.onboarding.agent import PersonalContext
 
 Messages = Annotated[list[BaseMessage], add_messages]
@@ -219,6 +220,7 @@ class ChatActivityState(BaseModel):
                 "Use a paper ledger instead of a spreadsheet for expense tallying.",
                 "If automation feels scary, set a monthly phone reminder to transfer funds manually.",
             ],
+            level=ActivityLevel.Intermediate,
         )
     )
     progress: Annotated[ActivityProgress | None, get_activity_progress] = Field(

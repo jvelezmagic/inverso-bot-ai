@@ -17,6 +17,7 @@ async def create_activity_from_concepts(
     Generate a single Activity based on level, concepts, and optional description/context.
     """
     llm = ChatOpenAI(model="o3-2025-04-16")
+    llm = ChatOpenAI(model="gpt-4.1")
 
     # Compose the system prompt
     system_prompt = f"""\
@@ -57,7 +58,11 @@ All the generated content should be markdown-formatted.
     }
 
     # Call the LLM with structured output
-    activity = await llm.with_structured_output(schema=Activity, strict=True).ainvoke(
+    activity = await llm.with_structured_output(
+        schema=Activity,
+        strict=True,
+        method="function_calling",
+    ).ainvoke(
         [
             ("system", system_prompt),
             ("user", str(user_message)),
@@ -65,6 +70,6 @@ All the generated content should be markdown-formatted.
     )
 
     if not isinstance(activity, Activity):
-        raise ValueError("Invalid activity structure")
+        raise ValueError(f"Invalid activity structure {activity=}")
 
     return activity

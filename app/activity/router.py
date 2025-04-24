@@ -154,6 +154,7 @@ activity_example = Activity(
         "Use a paper ledger instead of a spreadsheet for expense tallying.",
         "If automation feels scary, set a monthly phone reminder to transfer funds manually.",
     ],
+    level=ActivityLevel.Intermediate,
 )
 
 
