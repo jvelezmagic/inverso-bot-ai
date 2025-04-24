@@ -251,7 +251,7 @@ Example activity titles:
 - "Investing Basics: Getting Started with What You Know"
 
 Be creative, empathetic, and practical. Focus on helping the user achieve their financial goals in a way that feels relevant and achievable in their real life, and that increases their financial literacy and confidence.
-Only generate TWO activities."""
+Only generate TWO activities. Activities should be always in spanish"""
 
     activities = await llm.with_structured_output(
         schema=Activities,
