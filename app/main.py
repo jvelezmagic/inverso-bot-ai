@@ -43,6 +43,8 @@ async def validate_inverso_api_key(
 app = FastAPI(
     lifespan=lifespan,
     dependencies=[Depends(validate_inverso_api_key)],
+    redoc_url=None,
+    docs_url=None,
 )
 
 
