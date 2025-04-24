@@ -14,7 +14,7 @@ from app.activity.agent import (
     ActivityStep,
     OnboardingDataComplete,
 )
-from app.activity.create import create_activities_from_onboarding_data
+from app.activity.create_from_onboarding import create_activities_from_onboarding_data
 from app.activity.dependencies import ActivityAgentDep
 from app.onboarding.agent import PersonalContext
 

@@ -17,7 +17,7 @@ from langgraph.types import Command
 from pydantic import BaseModel, Field
 from pydantic_ai import format_as_xml
 
-from app.activity.create import (
+from app.activity.create_from_onboarding import (
     Activity,
     ActivityBackground,
     ActivityStep,
