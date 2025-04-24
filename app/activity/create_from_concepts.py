@@ -1,13 +1,14 @@
-from typing import Any, Literal
+from typing import Any
 
 from langchain_openai import ChatOpenAI
 
 from app.activity.create_from_onboarding import Activity
+from app.activity.models import ActivityLevel
 
 
 async def create_activity_from_concepts(
     *,
-    level: Literal["Beginner", "Intermediate", "Advanced"],
+    level: ActivityLevel,
     concepts: list[str],
     guided_description: str | None = None,
     user_context: dict[str, Any] | None = None,  # Optionally pass user info for context

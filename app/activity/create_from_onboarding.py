@@ -4,6 +4,7 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 from pydantic_ai import format_as_xml
 
+from app.activity.models import ActivityLevel
 from app.onboarding.agent import PersonalContext
 
 
@@ -101,8 +102,8 @@ class Activity(BaseModel):
         ),
     )
 
-    level: Literal["Beginner", "Intermediate", "Advanced"] = Field(
-        default="Beginner",
+    level: ActivityLevel = Field(
+        default=ActivityLevel.Beginner,
         description=(
             "The level of the activity. This helps categorize the activity and provide "
             "appropriate guidance for the user."
