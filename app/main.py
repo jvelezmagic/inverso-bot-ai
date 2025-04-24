@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Header, HTTPException, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from scalar_fastapi import get_scalar_api_reference  # type: ignore
 from sqlalchemy import text
 
@@ -33,8 +33,12 @@ async def lifespan(app: FastAPI):  # noqa: ARG001
 
 
 async def validate_inverso_api_key(
+    request: Request,
     x_inverso_api_key: Annotated[str | None, Header()] = None,
 ):
+    if request.url.path == "/scalar":
+        return
+
     if x_inverso_api_key != settings.INVERSO_API_KEY:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -79,7 +83,7 @@ All API endpoints require authentication using the `x-inverso-api-key` header.
     lifespan=lifespan,
     dependencies=[Depends(validate_inverso_api_key)],
     redoc_url=None,
-    # docs_url=None,
+    docs_url=None,
     version="1.0.0",
 )
 
@@ -109,7 +113,6 @@ async def health():
     "/scalar",
     include_in_schema=False,
     tags=["Documentation"],
-    dependencies=[],
 )
 async def scalar_html():
     """
