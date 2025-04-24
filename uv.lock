@@ -59,6 +59,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-ai" },
     { name = "pydantic-settings" },
+    { name = "scalar-fastapi" },
     { name = "sqlmodel" },
     { name = "tqdm" },
     { name = "trustcall" },
@@ -78,6 +79,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.11.3" },
     { name = "pydantic-ai", specifier = ">=0.1.3" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "scalar-fastapi", specifier = ">=1.0.3" },
     { name = "sqlmodel", specifier = ">=0.0.24" },
     { name = "tqdm", specifier = ">=4.67.1" },
     { name = "trustcall", specifier = ">=0.0.39" },
@@ -1465,6 +1467,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c4/2b/5c9562795c2eb2b5f63536961754760c25bf0f34af93d36aa28dea2fb303/s3transfer-0.11.5.tar.gz", hash = "sha256:8c8aad92784779ab8688a61aefff3e28e9ebdce43142808eaa3f0b0f402f68b7", size = 149107 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/45/39/13402e323666d17850eca87e4cd6ecfcf9fd7809cac9efdcce10272fc29d/s3transfer-0.11.5-py3-none-any.whl", hash = "sha256:757af0f2ac150d3c75bc4177a32355c3862a98d20447b69a0161812992fe0bd4", size = 84782 },
+]
+
+[[package]]
+name = "scalar-fastapi"
+version = "1.0.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2c/04/08ae9e86f24cd9b43bc5b2068fc5d1dcd3e7efa6db860290734d7d742512/scalar_fastapi-1.0.3.tar.gz", hash = "sha256:9e9cb8398e298cd435a0171eebe1675b8899eb21e47c238db0d48783143f0ffb", size = 4107 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/9e/ca0ffc3fc4788c6e1367b96a70f2d6ee33f91d580664a8142ba7ee292ef2/scalar_fastapi-1.0.3-py3-none-any.whl", hash = "sha256:4a47a140795097ad034518ce0e32940f2c54f0f4bc60e4c3289ca30a7e6f954d", size = 4579 },
 ]
 
 [[package]]

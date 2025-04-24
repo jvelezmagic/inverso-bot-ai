@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Header, HTTPException, status
+from scalar_fastapi import get_scalar_api_reference  # type: ignore
 
 from app.activity.router import activity_router as activity_router
 from app.activity.router import chat_activity_router
@@ -48,6 +49,17 @@ app = FastAPI(
 @app.post("/health")
 async def health():
     return {"status": "ok"}
+
+
+@app.get("/scalar", include_in_schema=False)
+async def scalar_html():
+    if app.openapi_url is None:
+        return
+
+    return get_scalar_api_reference(
+        openapi_url=app.openapi_url,
+        title="InversoAI API",
+    )
 
 
 app.include_router(prefix="/api/v1", router=onboarding_router)
