@@ -54,14 +54,14 @@ app = FastAPI(
 async def health():
     """
     Check the health status of the API and database connection.
-    
+
     Performs a simple database connectivity test by executing a lightweight query.
     This endpoint is used for monitoring the system's operational status and
     can be integrated with health check systems or load balancers.
-    
+
     Returns:
         dict: A status object with "ok" value indicating the system is functioning properly.
-        
+
     Raises:
         HTTPException: If the database connection fails, an exception will be raised,
                       resulting in a non-200 status code response.
@@ -75,11 +75,11 @@ async def health():
 async def scalar_html():
     """
     Serve the Scalar API reference documentation.
-    
+
     Generates and serves an interactive API documentation interface using Scalar.
     This endpoint is hidden from the schema but provides a user-friendly way to
     explore and test the API endpoints.
-    
+
     Returns:
         HTML content: The Scalar API reference UI with the OpenAPI specification loaded.
     """

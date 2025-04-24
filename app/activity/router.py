@@ -199,10 +199,10 @@ async def chat_activity(
 ):
     """
     Stream a conversation with the activity agent.
-    
+
     Sends a user message to the activity agent and returns the agent's response as a server-sent event stream.
     The stream includes AI message chunks and progress updates.
-    
+
     Returns:
         StreamingResponse: A streaming response with AI message chunks and progress updates.
     """
@@ -318,13 +318,13 @@ async def get_state(
 ):
     """
     Retrieve the current state of an activity chat thread.
-    
+
     Returns the conversation history, onboarding data, activity details, and progress
     for a specific chat thread. This endpoint is useful for resuming conversations
     or displaying the current state of an activity.
-    
+
     Returns:
-        GetStateResponse: The current state of the activity chat thread including messages, 
+        GetStateResponse: The current state of the activity chat thread including messages,
                           onboarding data, activity details, and progress.
     """
     config = {"configurable": {"thread_id": request.thread_id}}
@@ -377,11 +377,11 @@ async def create_activity_from_onboarding(
 ):
     """
     Generate personalized financial activities based on user onboarding data.
-    
+
     Creates a set of tailored financial activities using the user's profession, age range,
     life stage, financial goals, interests, concerns, and other personal context provided
     during onboarding.
-    
+
     Returns:
         CreateActivityFromOnboardingResponse: A list of generated activities tailored to the user's profile.
     """
@@ -422,11 +422,11 @@ async def create_activity_from_concepts_api(
 ):
     """
     Create a financial activity based on specific financial concepts.
-    
+
     Generates a structured financial activity incorporating the requested financial concepts
     at the specified difficulty level. Can be further personalized with guided descriptions
     and user context information.
-    
+
     Returns:
         CreateActivityFromConceptsResponse: A newly generated activity focused on the specified concepts.
     """
@@ -501,14 +501,14 @@ async def create_public_activity(
 ):
     """
     Create a new public financial activity.
-    
+
     Creates a financial activity that will be available to all users. The activity includes
     a title, description, objective, background information, step-by-step instructions,
     optional glossary terms, and alternative approaches.
-    
+
     Returns:
         ActivityResponse: The newly created public activity with its assigned ID and timestamps.
-    
+
     Raises:
         HTTPException: 400 error if the activity data is invalid.
     """
@@ -552,14 +552,14 @@ async def create_user_activity(
 ):
     """
     Create a new user-specific financial activity.
-    
+
     Creates a financial activity associated with a specific user. The activity includes
     all the components of a public activity but is only accessible to the specified user.
     This is useful for personalized or private financial activities.
-    
+
     Returns:
         ActivityResponse: The newly created user-specific activity with its assigned ID and timestamps.
-    
+
     Raises:
         HTTPException: 400 error if the activity data is invalid.
     """
@@ -608,11 +608,11 @@ async def get_public_activities(
 ):
     """
     Retrieve all public financial activities.
-    
+
     Returns a list of all publicly available financial activities, sorted by difficulty level
     (beginner, intermediate, advanced) and then by creation date (newest first). This endpoint
     is useful for displaying a catalog of activities available to all users.
-    
+
     Returns:
         ActivityListResponse: A sorted list of all public activities with their complete details.
     """
@@ -654,14 +654,14 @@ async def get_user_activities(
 ):
     """
     Retrieve all activities for a specific user.
-    
-    Returns a list of all financial activities associated with the specified user ID, sorted 
+
+    Returns a list of all financial activities associated with the specified user ID, sorted
     by difficulty level (beginner, intermediate, advanced) and then by creation date (newest first).
     This endpoint is useful for displaying a user's personal library of activities.
-    
+
     Parameters:
         user_id: The unique identifier of the user whose activities should be retrieved.
-    
+
     Returns:
         ActivityListResponse: A sorted list of all user-specific activities with their complete details.
     """
@@ -703,16 +703,16 @@ async def get_activity(
 ):
     """
     Retrieve a specific financial activity by its ID.
-    
-    Fetches a detailed view of a single financial activity, including all its components such as 
+
+    Fetches a detailed view of a single financial activity, including all its components such as
     title, description, objective, background, steps, glossary, and alternative methods.
-    
+
     Parameters:
         activity_id: The unique identifier (UUID) of the activity to retrieve.
-    
+
     Returns:
         ActivityResponse: The complete details of the requested activity.
-    
+
     Raises:
         HTTPException: 404 error if the activity with the specified ID is not found.
     """
