@@ -362,7 +362,7 @@ async def create_activity_from_onboarding(
 class CreateActivityFromConceptsRequest(BaseModel):
     """Request to create activity from concepts."""
 
-    level: Literal["Beginner", "Intermediate", "Advanced"] = Field(
+    level: ActivityLevel = Field(
         description="The level of the activity.",
     )
     concepts: list[str] = Field(
@@ -438,10 +438,15 @@ class ActivityResponse(BaseModel):
     """Response for activity creation."""
 
     id: UUID
+    user_id: str | None
     title: str
     description: str
+    overall_objective: str
+    background: dict[str, Any]
+    steps: list[Any]
+    glossary: dict[str, str] | None
+    alternative_methods: list[str] | None
     level: str
-    user_id: str | None
 
 
 @activity_router.post("/public", response_model=ActivityResponse)
@@ -467,10 +472,15 @@ async def create_public_activity(
         created_activity = await activity_repository.create_public_activity(activity)
         return ActivityResponse(
             id=created_activity.id,
+            user_id=created_activity.user_id,
             title=created_activity.title,
             description=created_activity.description,
+            overall_objective=created_activity.overall_objective,
+            background=created_activity.background,
+            steps=created_activity.steps,
+            glossary=created_activity.glossary,
+            alternative_methods=created_activity.alternative_methods,
             level=created_activity.level,
-            user_id=created_activity.user_id,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -499,10 +509,15 @@ async def create_user_activity(
         created_activity = await activity_repository.create_user_activity(activity)
         return ActivityResponse(
             id=created_activity.id,
+            user_id=created_activity.user_id,
             title=created_activity.title,
             description=created_activity.description,
+            overall_objective=created_activity.overall_objective,
+            background=created_activity.background,
+            steps=created_activity.steps,
+            glossary=created_activity.glossary,
+            alternative_methods=created_activity.alternative_methods,
             level=created_activity.level,
-            user_id=created_activity.user_id,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -525,10 +540,15 @@ async def get_public_activities(
         data=[
             ActivityResponse(
                 id=activity.id,
+                user_id=activity.user_id,
                 title=activity.title,
                 description=activity.description,
+                overall_objective=activity.overall_objective,
+                background=activity.background,
+                steps=activity.steps,
+                glossary=activity.glossary,
+                alternative_methods=activity.alternative_methods,
                 level=activity.level,
-                user_id=activity.user_id,
             )
             for activity in activities
         ]
@@ -547,10 +567,15 @@ async def get_user_activities(
         data=[
             ActivityResponse(
                 id=activity.id,
+                user_id=activity.user_id,
                 title=activity.title,
                 description=activity.description,
+                overall_objective=activity.overall_objective,
+                background=activity.background,
+                steps=activity.steps,
+                glossary=activity.glossary,
+                alternative_methods=activity.alternative_methods,
                 level=activity.level,
-                user_id=activity.user_id,
             )
             for activity in activities
         ]
@@ -570,8 +595,13 @@ async def get_activity(
 
     return ActivityResponse(
         id=activity.id,
+        user_id=activity.user_id,
         title=activity.title,
         description=activity.description,
+        overall_objective=activity.overall_objective,
+        background=activity.background,
+        steps=activity.steps,
+        glossary=activity.glossary,
+        alternative_methods=activity.alternative_methods,
         level=activity.level,
-        user_id=activity.user_id,
     )
