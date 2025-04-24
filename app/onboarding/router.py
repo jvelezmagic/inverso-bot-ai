@@ -53,6 +53,19 @@ async def chat_onboarding(
     request: ChatOnboardingRequest,
     agent: OnboaringAgentDep,
 ):
+    """
+    Interact with the onboarding agent in a streaming conversation.
+    
+    Sends a user message to the onboarding agent and returns the agent's response as a server-sent
+    event stream. The stream includes AI message chunks and an onboarding completion event when
+    the onboarding process is complete.
+    
+    The onboarding agent helps gather financial information about the user through conversation,
+    which is later used to personalize financial activities.
+    
+    Returns:
+        StreamingResponse: A streaming response with AI message chunks and onboarding completion events.
+    """
     human_message = HumanMessage(content=request.message)
 
     async def stream_response():
@@ -144,6 +157,17 @@ async def get_state(
     agent: OnboaringAgentDep,
     request: ChatOnboardingStateRequest = Query(),
 ):
+    """
+    Retrieve the current state of an onboarding chat thread.
+    
+    Fetches the conversation history and collected onboarding data for a specific chat thread.
+    This endpoint is useful for resuming onboarding conversations or accessing the financial
+    information collected during the onboarding process.
+    
+    Returns:
+        GetStateResponse: The current state of the onboarding chat thread including messages
+                          and collected onboarding data.
+    """
     config = {"configurable": {"thread_id": request.thread_id}}
     state = await agent.aget_state(config=config)
     messages = state.values["messages"]
