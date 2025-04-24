@@ -89,11 +89,12 @@ All API endpoints require authentication using the `x-inverso-api-key` header.
 )
 
 origins = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:54507",
-    "http://127.0.0.1:54507",
-    "https://inverso.digital",
+    # "http://localhost:3000",
+    # "http://localhost:3001",
+    # "http://localhost:54507",
+    # "http://127.0.0.1:54507",
+    # "https://inverso.digital",
+    "*",
 ]
 
 app.add_middleware(
