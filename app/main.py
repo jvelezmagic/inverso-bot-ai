@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
+from fastapi.middleware.cors import CORSMiddleware
 from scalar_fastapi import get_scalar_api_reference  # type: ignore
 from sqlalchemy import text
 
@@ -85,6 +86,20 @@ All API endpoints require authentication using the `x-inverso-api-key` header.
     redoc_url=None,
     docs_url=None,
     version="1.0.0",
+)
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://inverso.digital",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
