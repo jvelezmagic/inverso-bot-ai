@@ -14,6 +14,7 @@ from app.activity.agent import (
     ActivityStep,
     OnboardingDataComplete,
 )
+from app.activity.create_from_concepts import create_activity_from_concepts
 from app.activity.create_from_onboarding import create_activities_from_onboarding_data
 from app.activity.dependencies import ActivityAgentDep
 from app.onboarding.agent import PersonalContext
@@ -344,4 +345,44 @@ async def create_activity_from_onboarding(
     return CreateActivityFromOnboardingResponse(
         type="onboarding",
         data=activities.activities,
+    )
+
+
+class CreateActivityFromConceptsRequest(BaseModel):
+    """Request to create activity from concepts."""
+
+    level: Literal["Beginner", "Intermediate", "Advanced"] = Field(
+        description="The level of the activity.",
+    )
+    concepts: list[str] = Field(
+        description="A list of financial concepts to include in the activity.",
+    )
+    guided_description: str | None = Field(
+        default=None,
+        description="A guided description of the activity's context, background, or scenario.",
+    )
+    user_context: dict[str, Any] | None = Field(
+        default=None,
+        description="A dictionary of user information to personalize the activity.",
+    )
+
+
+class CreateActivityFromConceptsResponse(BaseModel):
+    type: Literal["concepts"] = "concepts"
+    data: Activity
+
+
+@activity_router.post("/concepts")
+async def create_activity_from_concepts_api(
+    request: CreateActivityFromConceptsRequest,
+):
+    activity = await create_activity_from_concepts(
+        level=request.level,
+        concepts=request.concepts,
+        guided_description=request.guided_description,
+        user_context=request.user_context,
+    )
+    return CreateActivityFromConceptsResponse(
+        type="concepts",
+        data=activity,
     )
