@@ -84,7 +84,7 @@ All API endpoints require authentication using the `x-inverso-api-key` header.
 )
 
 
-@app.post("/health")
+@app.post("/health", tags=["System"])
 async def health():
     """
     Check the health status of the API and database connection.
@@ -105,7 +105,7 @@ async def health():
     return {"status": "ok"}
 
 
-@app.get("/scalar", include_in_schema=False)
+@app.get("/scalar", include_in_schema=False, tags=["Documentation"])
 async def scalar_html():
     """
     Serve the Scalar API reference documentation.

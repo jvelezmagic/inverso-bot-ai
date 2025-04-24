@@ -45,7 +45,10 @@ def format_sse(data: str, event: str | None = None) -> bytes:
     return msg.encode("utf-8")
 
 
-router = APIRouter(prefix="/chat/onboarding")
+router = APIRouter(
+    prefix="/chat/onboarding",
+    tags=["Onboarding Conversation"],
+)
 
 
 @router.post("/")

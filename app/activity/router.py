@@ -26,7 +26,10 @@ from app.activity.dependencies import ActivityAgentDep, ActivityRepositoryDep
 from app.activity.models import Activity as ActivityModel
 from app.activity.models import ActivityLevel
 
-chat_activity_router = APIRouter(prefix="/chat/activity")
+chat_activity_router = APIRouter(
+    prefix="/chat/activity",
+    tags=["Activity Conversation"],
+)
 onboarding_data_example = OnboardingDataComplete(
     profession="Software Engineer",
     age_range="30-39",
@@ -354,7 +357,10 @@ async def get_state(
     }
 
 
-activity_router = APIRouter(prefix="/activity")
+activity_router = APIRouter(
+    prefix="/activity",
+    tags=["Activity Management"],
+)
 
 
 class CreateActivityFromOnboardingRequest(BaseModel):
@@ -371,7 +377,7 @@ class CreateActivityFromOnboardingResponse(BaseModel):
     data: list[Activity]
 
 
-@activity_router.post("/onboarding")
+@activity_router.post("/onboarding", tags=["Activity Generation"])
 async def create_activity_from_onboarding(
     request: CreateActivityFromOnboardingRequest,
 ):
@@ -416,7 +422,7 @@ class CreateActivityFromConceptsResponse(BaseModel):
     data: Activity
 
 
-@activity_router.post("/concepts")
+@activity_router.post("/concepts", tags=["Activity Generation"])
 async def create_activity_from_concepts_api(
     request: CreateActivityFromConceptsRequest,
 ):
@@ -494,7 +500,7 @@ class ActivityResponse(BaseModel):
     updated_at: datetime
 
 
-@activity_router.post("/public", response_model=ActivityResponse)
+@activity_router.post("/public", response_model=ActivityResponse, tags=["Activity Creation"])
 async def create_public_activity(
     request: CreatePublicActivityRequest,
     activity_repository: ActivityRepositoryDep,
@@ -545,7 +551,7 @@ async def create_public_activity(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@activity_router.post("/user", response_model=ActivityResponse)
+@activity_router.post("/user", response_model=ActivityResponse, tags=["Activity Creation"])
 async def create_user_activity(
     request: CreateUserActivityRequest,
     activity_repository: ActivityRepositoryDep,
@@ -602,7 +608,7 @@ class ActivityListResponse(BaseModel):
     data: list[ActivityResponse]
 
 
-@activity_router.get("/public", response_model=ActivityListResponse)
+@activity_router.get("/public", response_model=ActivityListResponse, tags=["Activity Retrieval"])
 async def get_public_activities(
     activity_repository: ActivityRepositoryDep,
 ):
@@ -647,7 +653,7 @@ async def get_public_activities(
     )
 
 
-@activity_router.get("/user/{user_id}", response_model=ActivityListResponse)
+@activity_router.get("/user/{user_id}", response_model=ActivityListResponse, tags=["Activity Retrieval"])
 async def get_user_activities(
     user_id: str,
     activity_repository: ActivityRepositoryDep,
@@ -696,7 +702,7 @@ async def get_user_activities(
     )
 
 
-@activity_router.get("/{activity_id}", response_model=ActivityResponse)
+@activity_router.get("/{activity_id}", response_model=ActivityResponse, tags=["Activity Retrieval"])
 async def get_activity(
     activity_id: UUID,
     activity_repository: ActivityRepositoryDep,
