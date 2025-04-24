@@ -43,10 +43,44 @@ async def validate_inverso_api_key(
 
 
 app = FastAPI(
+    title="InversoAI API",
+    summary="Personalized financial education platform with interactive AI-powered learning experiences",
+    description="""\
+# InversoAI: Personalized Financial Education Platform
+
+InversoAI aims to democratize financial education by creating a highly personalized learning
+experience that adapts to each user's unique background, goals, and knowledge level. We make
+financial concepts accessible through interactive conversations and tailored activities that
+connect directly to users' real-life situations.
+
+## Key Features
+
+- **Personalized onboarding**: Collects user information through a conversational interface,
+    gathering details about life stage, profession, age, financial goals, interests, concerns,
+    and knowledge level.
+
+- **Activity generation**: Creates tailored financial learning activities based on the user's
+    profile, ensuring that content is relevant to their specific situation.
+
+- **Interactive guidance**: Provides step-by-step coaching through financial activities, using
+    conversation to explain concepts, answer questions, and adapt to the user's pace and understanding.
+
+- **Progress tracking**: Monitors user progress through activities, marking steps as "Not started,"
+    "In progress," or "Completed" to maintain momentum.
+
+- **Knowledge building**: Builds financial literacy progressively, with activities that range from
+    beginner to advanced levels, ensuring continuous learning and development.
+
+
+## API Authentication
+
+All API endpoints require authentication using the `x-inverso-api-key` header.
+    """,
     lifespan=lifespan,
     dependencies=[Depends(validate_inverso_api_key)],
     redoc_url=None,
     docs_url=None,
+    version="1.0.0",
 )
 
 
@@ -88,7 +122,7 @@ async def scalar_html():
 
     return get_scalar_api_reference(
         openapi_url=app.openapi_url,
-        title="InversoAI API",
+        title="InversoAI API - Personalized Financial Education Platform",
     )
 
 
