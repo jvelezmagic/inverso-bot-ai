@@ -221,6 +221,7 @@ async def create_activities_from_onboarding_data(
     onboarding_data: OnboardingDataComplete,
 ):
     llm = ChatOpenAI(model="o3-2025-04-16")
+    llm = ChatOpenAI(model="gpt-4.1")
 
     system_prompt = """\
 You are an expert financial educator and curriculum designer. Your task is to create a set of highly tailored, step-by-step teaching activities for a user, based on their onboarding information. The activities should be cohesive, relevant, and designed to help the user learn new financial concepts by connecting them to their personal context, goals, and environment.
