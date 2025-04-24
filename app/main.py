@@ -79,7 +79,7 @@ All API endpoints require authentication using the `x-inverso-api-key` header.
     lifespan=lifespan,
     dependencies=[Depends(validate_inverso_api_key)],
     redoc_url=None,
-    docs_url=None,
+    # docs_url=None,
     version="1.0.0",
 )
 
@@ -105,7 +105,12 @@ async def health():
     return {"status": "ok"}
 
 
-@app.get("/scalar", include_in_schema=False, tags=["Documentation"])
+@app.get(
+    "/scalar",
+    include_in_schema=False,
+    tags=["Documentation"],
+    dependencies=[],
+)
 async def scalar_html():
     """
     Serve the Scalar API reference documentation.
