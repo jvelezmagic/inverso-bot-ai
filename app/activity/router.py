@@ -180,7 +180,6 @@ class ChatActivityRequest(BaseModel):
     )
     activity: Activity = Field(
         description="Activity to chat.",
-        default=activity_example,
     )
 
 
@@ -209,6 +208,7 @@ async def chat_activity(
     Returns:
         StreamingResponse: A streaming response with AI message chunks and progress updates.
     """
+    print(request.model_dump_json(indent=2))
     human_message = HumanMessage(content=request.message)
 
     async def stream_response():
@@ -500,7 +500,9 @@ class ActivityResponse(BaseModel):
     updated_at: datetime
 
 
-@activity_router.post("/public", response_model=ActivityResponse, tags=["Activity Creation"])
+@activity_router.post(
+    "/public", response_model=ActivityResponse, tags=["Activity Creation"]
+)
 async def create_public_activity(
     request: CreatePublicActivityRequest,
     activity_repository: ActivityRepositoryDep,
@@ -551,7 +553,9 @@ async def create_public_activity(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@activity_router.post("/user", response_model=ActivityResponse, tags=["Activity Creation"])
+@activity_router.post(
+    "/user", response_model=ActivityResponse, tags=["Activity Creation"]
+)
 async def create_user_activity(
     request: CreateUserActivityRequest,
     activity_repository: ActivityRepositoryDep,
@@ -608,7 +612,9 @@ class ActivityListResponse(BaseModel):
     data: list[ActivityResponse]
 
 
-@activity_router.get("/public", response_model=ActivityListResponse, tags=["Activity Retrieval"])
+@activity_router.get(
+    "/public", response_model=ActivityListResponse, tags=["Activity Retrieval"]
+)
 async def get_public_activities(
     activity_repository: ActivityRepositoryDep,
 ):
@@ -653,7 +659,9 @@ async def get_public_activities(
     )
 
 
-@activity_router.get("/user/{user_id}", response_model=ActivityListResponse, tags=["Activity Retrieval"])
+@activity_router.get(
+    "/user/{user_id}", response_model=ActivityListResponse, tags=["Activity Retrieval"]
+)
 async def get_user_activities(
     user_id: str,
     activity_repository: ActivityRepositoryDep,
@@ -702,7 +710,9 @@ async def get_user_activities(
     )
 
 
-@activity_router.get("/{activity_id}", response_model=ActivityResponse, tags=["Activity Retrieval"])
+@activity_router.get(
+    "/{activity_id}", response_model=ActivityResponse, tags=["Activity Retrieval"]
+)
 async def get_activity(
     activity_id: UUID,
     activity_repository: ActivityRepositoryDep,
