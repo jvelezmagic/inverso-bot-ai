@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
-from sqlalchemy.dialects.postgresql import JSONB, DATE
+from sqlalchemy.dialects.postgresql import DATE, JSONB
 from sqlmodel import Column, Field, SQLModel
 
 
