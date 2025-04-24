@@ -1,6 +1,6 @@
 import uuid
 from enum import StrEnum
-from typing import Any, Literal
+from typing import Any
 
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Column, Field, SQLModel
