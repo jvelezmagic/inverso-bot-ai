@@ -1,9 +1,12 @@
 import asyncio
 from typing import TypedDict
 
-import tqdm.asyncio
-
-from app.activity.create_from_concepts import create_activity_from_concepts
+from app.activity.create_from_concepts import (
+    Activity as ActivityAI,
+)
+from app.activity.create_from_concepts import (
+    create_activity_from_concepts,
+)
 from app.activity.models import Activity, ActivityLevel
 from app.activity.repository import ActivityRepository
 from app.database.session import SessionLocal
@@ -225,23 +228,28 @@ async def create(
     return None
 
 
-async def craete_rate_limited(
+async def generate_activity_rate_limited(
     level: ActivityLevel,
     activity: ActivityData,
     semaphore: asyncio.Semaphore,
 ):
     try:
         async with semaphore:
-            return await create(level, activity)
+            return await create_activity_from_concepts(
+                level=level,
+                concepts=activity["concepts"],
+                guided_description=activity["guided_description"],
+                user_context=None,
+            )
     except Exception as e:
-        print(f"Error creating activity: {e}")
+        print(f"Error generating activity: {e}")
 
 
 async def main():
     max_concurrency = 10
     semaphore = asyncio.Semaphore(max_concurrency)
     tasks = [
-        craete_rate_limited(
+        generate_activity_rate_limited(
             level=level,
             activity=activity,
             semaphore=semaphore,
@@ -250,7 +258,28 @@ async def main():
         for activity in activities
     ]
 
-    await tqdm.asyncio.tqdm.gather(*tasks, total=len(tasks))
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    valid_results = [result for result in results if isinstance(result, ActivityAI)]
+    print(f"Generated {len(valid_results)} activities")
+
+    activities = [
+        Activity(
+            user_id=None,
+            title=activity.title,
+            description=activity.description,
+            overall_objective=activity.overall_objective,
+            background=activity.background.model_dump(),
+            steps=[step.model_dump() for step in activity.steps],
+            glossary=activity.glossary,
+            alternative_methods=activity.alternative_methods,
+            level=activity.level,
+        )
+        for activity in valid_results
+    ]
+
+    async with SessionLocal() as session:
+        repository = ActivityRepository(session)
+        await repository.create_public_activities(activities=activities)
 
     print("All tasks completed")
 
