@@ -1,7 +1,8 @@
 from typing import Annotated, Any, Literal
+from uuid import UUID
 
 import orjson
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from langchain_core.messages import AIMessageChunk, HumanMessage
 from langchain_core.runnables.schema import EventData
@@ -11,13 +12,18 @@ from app.activity.agent import (
     Activity,
     ActivityBackground,
     ActivityProgress,
-    ActivityStep,
+    # ActivityStep,
     OnboardingDataComplete,
 )
 from app.activity.create_from_concepts import create_activity_from_concepts
-from app.activity.create_from_onboarding import create_activities_from_onboarding_data
-from app.activity.dependencies import ActivityAgentDep
-from app.onboarding.agent import PersonalContext
+from app.activity.create_from_onboarding import (
+    ActivityStep,
+    PersonalContext,
+    create_activities_from_onboarding_data,
+)
+from app.activity.dependencies import ActivityAgentDep, ActivityRepositoryDep
+from app.activity.models import Activity as ActivityModel
+from app.activity.models import ActivityLevel
 
 chat_activity_router = APIRouter(prefix="/chat/activity")
 onboarding_data_example = OnboardingDataComplete(
@@ -301,7 +307,6 @@ async def get_state(
     )
     activity = Activity.model_validate(state.values["activity"])
     progress_data = state.values["progress"]
-    # progress = ActivityProgress.model_validate(state.values["progress"])
     return {
         "messages": [
             {
@@ -385,4 +390,182 @@ async def create_activity_from_concepts_api(
     return CreateActivityFromConceptsResponse(
         type="concepts",
         data=activity,
+    )
+
+
+class CreatePublicActivityRequest(BaseModel):
+    """Request to create a public activity."""
+
+    title: str = Field(description="The name of the activity.")
+    description: str = Field(
+        description="A concise background summary for the activity."
+    )
+    overall_objective: str = Field(
+        description="The main learning or practical objective of the activity."
+    )
+    background: ActivityBackground = Field(
+        description="Contains concepts and content about the activity."
+    )
+    steps: list[ActivityStep] = Field(
+        description="Detailed steps to complete the activity."
+    )
+    glossary: dict[str, str] | None = Field(
+        default=None,
+        description="A dictionary of key terms and their definitions.",
+    )
+    alternative_methods: list[str] | None = Field(
+        default=None,
+        description="Suggestions for non-technical or alternative ways to complete the activity.",
+    )
+    level: ActivityLevel = Field(
+        description="The level of the activity (Beginner, Intermediate, Advanced)."
+    )
+
+
+class CreateUserActivityRequest(CreatePublicActivityRequest):
+    """Request to create a user-specific activity."""
+
+    user_id: str = Field(description="The ID of the user associated with the activity.")
+
+
+class ActivityResponse(BaseModel):
+    """Response for activity creation."""
+
+    id: UUID
+    title: str
+    description: str
+    level: str
+    user_id: str | None
+
+
+@activity_router.post("/public", response_model=ActivityResponse)
+async def create_public_activity(
+    request: CreatePublicActivityRequest,
+    activity_repository: ActivityRepositoryDep,
+):
+    """Create a new public activity."""
+
+    activity = ActivityModel(
+        user_id=None,
+        title=request.title,
+        description=request.description,
+        overall_objective=request.overall_objective,
+        background=request.background.model_dump(),
+        steps=request.steps,
+        glossary=request.glossary,
+        alternative_methods=request.alternative_methods,
+        level=request.level,
+    )
+
+    try:
+        created_activity = await activity_repository.create_public_activity(activity)
+        return ActivityResponse(
+            id=created_activity.id,
+            title=created_activity.title,
+            description=created_activity.description,
+            level=created_activity.level,
+            user_id=created_activity.user_id,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@activity_router.post("/user", response_model=ActivityResponse)
+async def create_user_activity(
+    request: CreateUserActivityRequest,
+    activity_repository: ActivityRepositoryDep,
+):
+    """Create a new user-specific activity."""
+
+    activity = ActivityModel(
+        user_id=request.user_id,
+        title=request.title,
+        description=request.description,
+        overall_objective=request.overall_objective,
+        background=request.background.model_dump(),
+        steps=request.steps,
+        glossary=request.glossary,
+        alternative_methods=request.alternative_methods,
+        level=request.level,
+    )
+
+    try:
+        created_activity = await activity_repository.create_user_activity(activity)
+        return ActivityResponse(
+            id=created_activity.id,
+            title=created_activity.title,
+            description=created_activity.description,
+            level=created_activity.level,
+            user_id=created_activity.user_id,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+class ActivityListResponse(BaseModel):
+    """Response for activity listing."""
+
+    data: list[ActivityResponse]
+
+
+@activity_router.get("/public", response_model=ActivityListResponse)
+async def get_public_activities(
+    activity_repository: ActivityRepositoryDep,
+):
+    """Get all public activities."""
+
+    activities = await activity_repository.get_public_activities()
+    return ActivityListResponse(
+        data=[
+            ActivityResponse(
+                id=activity.id,
+                title=activity.title,
+                description=activity.description,
+                level=activity.level,
+                user_id=activity.user_id,
+            )
+            for activity in activities
+        ]
+    )
+
+
+@activity_router.get("/user/{user_id}", response_model=ActivityListResponse)
+async def get_user_activities(
+    user_id: str,
+    activity_repository: ActivityRepositoryDep,
+):
+    """Get all activities for a specific user."""
+
+    activities = await activity_repository.get_user_activities(user_id)
+    return ActivityListResponse(
+        data=[
+            ActivityResponse(
+                id=activity.id,
+                title=activity.title,
+                description=activity.description,
+                level=activity.level,
+                user_id=activity.user_id,
+            )
+            for activity in activities
+        ]
+    )
+
+
+@activity_router.get("/{activity_id}", response_model=ActivityResponse)
+async def get_activity(
+    activity_id: UUID,
+    activity_repository: ActivityRepositoryDep,
+):
+    """Get an activity by ID."""
+
+    activity = await activity_repository.get_activity(str(activity_id))
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activity not found")
+
+    return ActivityResponse(
+        id=activity.id,
+        title=activity.title,
+        description=activity.description,
+        level=activity.level,
+        user_id=activity.user_id,
     )
