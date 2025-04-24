@@ -198,8 +198,6 @@ data: dict[ActivityLevel, list[ActivityData]] = {
 async def create(
     level: ActivityLevel,
     activity: ActivityData,
-    lock: asyncio.Lock,
-    repository: ActivityRepository,
 ):
     generated_activity = await create_activity_from_concepts(
         level=level,
@@ -208,7 +206,8 @@ async def create(
         user_context=None,
     )
 
-    async with lock:
+    async with SessionLocal() as session:
+        repository = ActivityRepository(session)
         await repository.create_public_activity(
             Activity(
                 user_id=None,
@@ -229,38 +228,31 @@ async def create(
 async def craete_rate_limited(
     level: ActivityLevel,
     activity: ActivityData,
-    lock: asyncio.Lock,
-    repository: ActivityRepository,
     semaphore: asyncio.Semaphore,
 ):
     try:
         async with semaphore:
-            return await create(level, activity, lock, repository)
+            return await create(level, activity)
     except Exception as e:
         print(f"Error creating activity: {e}")
 
 
 async def main():
     max_concurrency = 10
-    async with SessionLocal() as session:
-        lock = asyncio.Lock()
-        semaphore = asyncio.Semaphore(max_concurrency)
-        repository = ActivityRepository(session)
-        tasks = [
-            craete_rate_limited(
-                level=level,
-                activity=activity,
-                lock=lock,
-                repository=repository,
-                semaphore=semaphore,
-            )
-            for level, activities in data.items()
-            for activity in activities
-        ]
+    semaphore = asyncio.Semaphore(max_concurrency)
+    tasks = [
+        craete_rate_limited(
+            level=level,
+            activity=activity,
+            semaphore=semaphore,
+        )
+        for level, activities in data.items()
+        for activity in activities
+    ]
 
-        await tqdm.asyncio.tqdm.gather(*tasks, total=len(tasks))
+    await tqdm.asyncio.tqdm.gather(*tasks, total=len(tasks))
 
-        print("All tasks completed")
+    print("All tasks completed")
 
 
 if __name__ == "__main__":

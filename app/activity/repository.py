@@ -1,7 +1,7 @@
 from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import insert, select
+from sqlmodel import col, insert, select
 
 from app.activity.models import Activity
 
@@ -16,7 +16,7 @@ class ActivityRepository:
         return result.scalar_one_or_none()
 
     async def get_public_activities(self) -> list[Activity]:
-        query = select(Activity).where(Activity.user_id == None)
+        query = select(Activity).where(col(Activity.user_id).is_(None))
         results = await self.session.execute(query)
         return list(results.scalars().all())
 
@@ -26,7 +26,7 @@ class ActivityRepository:
         return list(results.scalars().all())
 
     async def create_public_activity(self, activity: Activity) -> Activity:
-        query = select(Activity).where(Activity.id == activity.id)
+        query = select(Activity).where(Activity.id == str(activity.id))
         result = await self.session.execute(query)
 
         if result.scalar_one_or_none():
@@ -37,7 +37,7 @@ class ActivityRepository:
         return activity
 
     async def create_user_activity(self, activity: Activity) -> Activity:
-        query = select(Activity).where(Activity.id == activity.id)
+        query = select(Activity).where(Activity.id == str(activity.id))
         result = await self.session.execute(query)
 
         if result.scalar_one_or_none():
