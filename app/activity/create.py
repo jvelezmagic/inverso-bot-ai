@@ -101,6 +101,14 @@ class Activity(BaseModel):
         ),
     )
 
+    level: Literal["Beginner", "Intermediate", "Advanced"] = Field(
+        default="Beginner",
+        description=(
+            "The level of the activity. This helps categorize the activity and provide "
+            "appropriate guidance for the user."
+        ),
+    )
+
     def as_xml(self) -> str:
         return format_as_xml(self)
 
