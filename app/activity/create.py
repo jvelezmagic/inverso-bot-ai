@@ -211,7 +211,9 @@ class OnboardingDataComplete(BaseModel):
         return format_as_xml(self)
 
 
-async def create_activities(onboarding_data: OnboardingDataComplete):
+async def create_activities_from_onboarding_data(
+    onboarding_data: OnboardingDataComplete,
+):
     llm = ChatOpenAI(model="o3-2025-04-16")
 
     system_prompt = """\
@@ -281,7 +283,7 @@ if __name__ == "__main__":
             ],
         )
 
-        activities = await create_activities(onboarding_data)
+        activities = await create_activities_from_onboarding_data(onboarding_data)
         print(activities.model_dump_json(indent=2))
 
     asyncio.run(main())

@@ -14,10 +14,11 @@ from app.activity.agent import (
     ActivityStep,
     OnboardingDataComplete,
 )
+from app.activity.create import create_activities_from_onboarding_data
 from app.activity.dependencies import ActivityAgentDep
 from app.onboarding.agent import PersonalContext
 
-router = APIRouter(prefix="/chat/activity")
+chat_activity_router = APIRouter(prefix="/chat/activity")
 onboarding_data_example = OnboardingDataComplete(
     profession="Software Engineer",
     age_range="30-39",
@@ -178,7 +179,7 @@ def format_sse(data: str, event: str | None = None) -> bytes:
     return msg.encode("utf-8")
 
 
-@router.post("/")
+@chat_activity_router.post("/")
 async def chat_activity(
     request: ChatActivityRequest,
     activity_agent: ActivityAgentDep,
@@ -285,7 +286,7 @@ class GetStateResponse(BaseModel):
     progress: ActivityProgress | None
 
 
-@router.get("/")
+@chat_activity_router.get("/")
 async def get_state(
     activity_agent: ActivityAgentDep,
     request: ChatActivityStateRequest = Query(),
@@ -316,3 +317,31 @@ async def get_state(
         if progress_data
         else None,
     }
+
+
+activity_router = APIRouter(prefix="/activity")
+
+
+class CreateActivityFromOnboardingRequest(BaseModel):
+    """Request to create activity from onboarding."""
+
+    onboarding_data: OnboardingDataComplete = Field(
+        description="Onboarding data to create activity from.",
+        default=onboarding_data_example,
+    )
+
+
+class CreateActivityFromOnboardingResponse(BaseModel):
+    type: Literal["onboarding"] = "onboarding"
+    data: list[Activity]
+
+
+@activity_router.post("/onboarding")
+async def create_activity_from_onboarding(
+    request: CreateActivityFromOnboardingRequest,
+):
+    activities = await create_activities_from_onboarding_data(request.onboarding_data)
+    return CreateActivityFromOnboardingResponse(
+        type="onboarding",
+        data=activities.activities,
+    )
