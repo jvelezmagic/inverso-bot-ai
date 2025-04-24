@@ -21,6 +21,7 @@ class ChatOnboardingRequest(BaseModel):
         description="Message to chat onboarding.",
     )
     user_full_name: str | None = Field(
+        default=None,
         description="Full name of the user.",
     )
 

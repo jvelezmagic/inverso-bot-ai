@@ -167,6 +167,7 @@ class ChatActivityRequest(BaseModel):
         description="Message to chat activity.",
     )
     user_full_name: str | None = Field(
+        default=None,
         description="Full name of the user.",
     )
     onboarding_data: OnboardingDataComplete = Field(
