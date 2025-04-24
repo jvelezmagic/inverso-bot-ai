@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
-from sqlalchemy.dialects.postgresql import DATE, JSONB
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlmodel import Column, Field, SQLModel
 
 
@@ -56,11 +56,11 @@ class Activity(SQLModel, table=True):
     )
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(UTC),
-        description="The date and time when the activity was created.",
-        sa_column=Column(DATE, nullable=False),
+        description="The timestamp when the activity was created.",
+        sa_column=Column(TIMESTAMP(timezone=True), nullable=False),
     )
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(UTC),
-        sa_column=Column(DATE, nullable=False),
-        description="The date and time when the activity was last updated.",
+        sa_column=Column(TIMESTAMP(timezone=True), nullable=False),
+        description="The timestamp when the activity was last updated.",
     )

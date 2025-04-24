@@ -40,6 +40,10 @@ Guidelines:
 - Use clear, accessible language.
 - Output a single JSON object matching the provided Activity schema.
 
+**Important**
+
+All the generated content should be markdown-formatted.
+
 {f"Guided description: {guided_description}" if guided_description else ""}
 {f"User context: {user_context}" if user_context else ""}
 """
