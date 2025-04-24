@@ -20,6 +20,9 @@ class ChatOnboardingRequest(BaseModel):
     message: str = Field(
         description="Message to chat onboarding.",
     )
+    user_full_name: str | None = Field(
+        description="Full name of the user.",
+    )
 
 
 class ChatOnboardingStateRequest(BaseModel):
@@ -56,7 +59,10 @@ async def chat_onboarding(
             stream_mode=["custom", "messages"],
             version="v2",
             config={
-                "configurable": {"thread_id": request.thread_id},
+                "configurable": {
+                    "thread_id": request.thread_id,
+                    "user_full_name": request.user_full_name,
+                },
                 "run_name": "chat_onboarding",
             },
             input={

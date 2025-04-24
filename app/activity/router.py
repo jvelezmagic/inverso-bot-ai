@@ -165,6 +165,9 @@ class ChatActivityRequest(BaseModel):
     message: str = Field(
         description="Message to chat activity.",
     )
+    user_full_name: str | None = Field(
+        description="Full name of the user.",
+    )
     onboarding_data: OnboardingDataComplete = Field(
         description="Onboarding data to chat activity.",
         default=onboarding_data_example,
@@ -198,7 +201,10 @@ async def chat_activity(
             stream_mode=["custom", "messages"],
             version="v2",
             config={
-                "configurable": {"thread_id": request.thread_id},
+                "configurable": {
+                    "thread_id": request.thread_id,
+                    "user_full_name": request.user_full_name,
+                },
                 "run_name": "chat_activity",
             },
             input={
