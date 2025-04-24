@@ -1,4 +1,5 @@
 import uuid
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
@@ -52,4 +53,14 @@ class Activity(SQLModel, table=True):
     )
     level: ActivityLevel = Field(
         default="Beginner", nullable=False, description="The level of the activity."
+    )
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+        nullable=False,
+        description="The date and time when the activity was created.",
+    )
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+        nullable=False,
+        description="The date and time when the activity was last updated.",
     )

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated, Any, Literal
 from uuid import UUID
 
@@ -447,6 +448,8 @@ class ActivityResponse(BaseModel):
     glossary: dict[str, str] | None
     alternative_methods: list[str] | None
     level: str
+    created_at: datetime
+    updated_at: datetime
 
 
 @activity_router.post("/public", response_model=ActivityResponse)
@@ -481,6 +484,8 @@ async def create_public_activity(
             glossary=created_activity.glossary,
             alternative_methods=created_activity.alternative_methods,
             level=created_activity.level,
+            created_at=created_activity.created_at,
+            updated_at=created_activity.updated_at,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -518,6 +523,8 @@ async def create_user_activity(
             glossary=created_activity.glossary,
             alternative_methods=created_activity.alternative_methods,
             level=created_activity.level,
+            created_at=created_activity.created_at,
+            updated_at=created_activity.updated_at,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -536,11 +543,14 @@ async def get_public_activities(
     """Get all public activities."""
 
     activities = await activity_repository.get_public_activities()
-    
-    # Sort activities by level: beginner, intermediate, advanced
+
+    # Sort activities by level: beginner, intermediate, advanced, then by created_at (newest first)
     level_order = {"beginner": 1, "intermediate": 2, "advanced": 3}
-    sorted_activities = sorted(activities, key=lambda a: level_order.get(a.level.lower(), 99))
-    
+    sorted_activities = sorted(
+        activities,
+        key=lambda a: (level_order.get(a.level.lower(), 99), -a.created_at.timestamp()),
+    )
+
     return ActivityListResponse(
         data=[
             ActivityResponse(
@@ -554,6 +564,8 @@ async def get_public_activities(
                 glossary=activity.glossary,
                 alternative_methods=activity.alternative_methods,
                 level=activity.level,
+                created_at=activity.created_at,
+                updated_at=activity.updated_at,
             )
             for activity in sorted_activities
         ]
@@ -568,11 +580,14 @@ async def get_user_activities(
     """Get all activities for a specific user."""
 
     activities = await activity_repository.get_user_activities(user_id)
-    
-    # Sort activities by level: beginner, intermediate, advanced
+
+    # Sort activities by level: beginner, intermediate, advanced, then by created_at (newest first)
     level_order = {"beginner": 1, "intermediate": 2, "advanced": 3}
-    sorted_activities = sorted(activities, key=lambda a: level_order.get(a.level.lower(), 99))
-    
+    sorted_activities = sorted(
+        activities,
+        key=lambda a: (level_order.get(a.level.lower(), 99), -a.created_at.timestamp()),
+    )
+
     return ActivityListResponse(
         data=[
             ActivityResponse(
@@ -586,6 +601,8 @@ async def get_user_activities(
                 glossary=activity.glossary,
                 alternative_methods=activity.alternative_methods,
                 level=activity.level,
+                created_at=activity.created_at,
+                updated_at=activity.updated_at,
             )
             for activity in sorted_activities
         ]
@@ -614,4 +631,6 @@ async def get_activity(
         glossary=activity.glossary,
         alternative_methods=activity.alternative_methods,
         level=activity.level,
+        created_at=activity.created_at,
+        updated_at=activity.updated_at,
     )
